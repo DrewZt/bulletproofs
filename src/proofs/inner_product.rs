@@ -27,10 +27,10 @@ use Errors::{self, InnerProductError};
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct InnerProductArg {
-    L: Vec<GE>,
-    R: Vec<GE>,
-    a_tag: BigInt,
-    b_tag: BigInt,
+    pub(crate) L: Vec<GE>,
+    pub(crate) R: Vec<GE>,
+    pub(crate) a_tag: BigInt,
+    pub(crate) b_tag: BigInt,
 }
 
 impl InnerProductArg {

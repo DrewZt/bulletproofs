@@ -29,14 +29,14 @@ use Errors::{self, RangeProofError};
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct RangeProof {
-    A: GE,
-    S: GE,
-    T1: GE,
-    T2: GE,
-    tau_x: FE,
-    miu: FE,
-    tx: FE,
-    inner_product_proof: InnerProductArg,
+   pub A: GE,
+   pub S: GE,
+   pub T1: GE,
+   pub T2: GE,
+   pub tau_x: FE,
+   pub miu: FE,
+   pub tx: FE,
+   pub inner_product_proof: InnerProductArg,
 }
 
 impl RangeProof {

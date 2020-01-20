@@ -16,14 +16,17 @@ version 3 of the License, or (at your option) any later version.
 */
 
 // based on the paper: https://eprint.iacr.org/2017/1066.pdf
+
+extern crate sha2;
+use self::sha2::{Sha256,Digest};
 use curv::arithmetic::traits::Modulo;
-use curv::cryptographic_primitives::hashing::hash_sha256::HSha256;
-use curv::cryptographic_primitives::hashing::traits::*;
 use curv::elliptic::curves::traits::*;
 use curv::BigInt;
 use curv::{FE, GE};
 
+
 use Errors::{self, InnerProductError};
+
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct InnerProductArg {
@@ -97,15 +100,22 @@ impl InnerProductArg {
                 })
                 .fold(aR_GL, |acc, x: GE| acc + x as GE);
 
-            let x = HSha256::create_hash_from_ge(&[&L, &R, &ux]);
-            let x_bn = x.to_big_int();
+            let mut hasher = Sha256::new();
+            for value in &[&L, &R, &ux] {
+                hasher.input(&value.pk_to_key_slice());
+            }
+
+            let result_hex = hasher.result();
+            let x_bn = BigInt::from(&result_hex[..]);
+            let x = ECScalar::from(&x_bn);
             let order = FE::q();
-            let x_inv_fe = x.invert();
+            let x_inv = x_bn.invert(&order).unwrap();
+            let x_inv_fe = ECScalar::from(&x_inv);
 
             let a_new = (0..n)
                 .map(|i| {
                     let aLx = BigInt::mod_mul(&a_L[i], &x_bn, &order);
-                    let aR_minusx = BigInt::mod_mul(&a_R[i], &x_inv_fe.to_big_int(), &order);
+                    let aR_minusx = BigInt::mod_mul(&a_R[i], &x_inv, &order);
                     BigInt::mod_add(&aLx, &aR_minusx, &order)
                 })
                 .collect::<Vec<BigInt>>();
@@ -114,7 +124,7 @@ impl InnerProductArg {
             let b_new = (0..n)
                 .map(|i| {
                     let bRx = BigInt::mod_mul(&b_R[i], &x_bn, &order);
-                    let bL_minusx = BigInt::mod_mul(&b_L[i], &x_inv_fe.to_big_int(), &order);
+                    let bL_minusx = BigInt::mod_mul(&b_L[i], &x_inv, &order);
                     BigInt::mod_add(&bRx, &bL_minusx, &order)
                 })
                 .collect::<Vec<BigInt>>();
@@ -166,13 +176,20 @@ impl InnerProductArg {
             let (G_L, G_R) = G.split_at(n);
             let (H_L, H_R) = H.split_at(n);
 
-            let x = HSha256::create_hash_from_ge(&[&self.L[0], &self.R[0], &ux]);
-            let x_bn = x.to_big_int();
+            let mut hasher = Sha256::new();
+            for value in &[&self.L[0], &self.R[0], &ux] {
+                hasher.input(&value.pk_to_key_slice());
+            }
+
+            let result_hex = hasher.result();
+            let x_bn = BigInt::from(&result_hex[..]);// HSha256::create_hash_from_ge2(&[&L, &R, &ux]);
+            let x = ECScalar::from(&x_bn);
             let order = FE::q();
-            let x_inv_fe = x.invert();
+            let x_inv = x_bn.invert(&order).unwrap();
+            let x_inv_fe = ECScalar::from(&x_inv);
             let x_sq_bn = BigInt::mod_mul(&x_bn, &x_bn, &order);
             let x_inv_sq_bn =
-                BigInt::mod_mul(&x_inv_fe.to_big_int(), &x_inv_fe.to_big_int(), &order);
+                BigInt::mod_mul(&x_inv, &x_inv, &order);
             let x_sq_fe: FE = ECScalar::from(&x_sq_bn);
             let x_inv_sq_fe: FE = ECScalar::from(&x_inv_sq_bn);
 

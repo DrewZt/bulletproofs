@@ -396,10 +396,10 @@ mod tests {
     use proofs::range_proof::RangeProof;
 
     #[test]
-    pub fn test_batch_4_range_proof_32() {
-        let n = 32;
+    pub fn test_batch_1_range_proof_64() {
+        let n = 64;
         // num of proofs
-        let m = 4;
+        let m = 1;
         let nm = n * m;
         let KZen: &[u8] = &[75, 90, 101, 110];
         let kzen_label = BigInt::from(KZen);

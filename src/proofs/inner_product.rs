@@ -182,7 +182,7 @@ impl InnerProductArg {
             }
 
             let result_hex = hasher.result();
-            let x_bn = BigInt::from(&result_hex[..]);// HSha256::create_hash_from_ge2(&[&L, &R, &ux]);
+            let x_bn = BigInt::from(&result_hex[..]);
             let x = ECScalar::from(&x_bn);
             let order = FE::q();
             let x_inv = x_bn.invert(&order).unwrap();

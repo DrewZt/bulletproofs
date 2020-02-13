@@ -27,4 +27,5 @@ pub mod proofs;
 pub enum Errors {
     InnerProductError,
     RangeProofError,
+    InvalidPointError,
 }

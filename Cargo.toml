@@ -1,6 +1,6 @@
 [package]
 name = "bulletproof"
-version = "2.0"
+version = "2.0.1"
 authors = [
     "Omer <omer@kzencorp.com>",
 ]
@@ -9,7 +9,7 @@ authors = [
 crate-type = ["lib"]
 
 [dependencies]
-curv = { git = "https://github.com/DrewZt/curv", tag = "v2.0",  features =  ["ec_secp256k1"]}
+curv = { git = "https://github.com/DrewZt/curv", tag = "v2.0.1",  features =  ["ec_secp256k1"]}
 sha2 = "0.8.0"
 itertools = "0.7.8"
 serde = "1.0"
